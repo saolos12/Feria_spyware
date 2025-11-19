@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portal de noticias líder en cobertura global.">
+    <title>Global Insight | Noticias en Vivo</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="top-bar">
+            <div class="container flex-between">
+                <div class="date-widget" id="current-date">Cargando fecha...</div>
+                <div class="market-widget">
+                    <span>📉 S&P 500: <span class="down">-0.4%</span></span>
+                    <span>📈 BTC: <span class="up">+1.2%</span></span>
+                    <span>📈 NVDA: <span class="up">+2.8%</span></span>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="main-nav">
+            <div class="container flex-between">
+                <a href="#" class="brand-logo">GLOBAL<span class="highlight">INSIGHT</span></a>
+                <ul class="nav-links">
+                    <li><a href="#">Internacional</a></li>
+                    <li><a href="#">Mercados</a></li>
+                    <li><a href="#">Tecnología</a></li>
+                    <li><a href="#">Opinión</a></li>
+                    <li><a href="#" class="subscribe-btn">Suscribirse</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="breaking-news-bar">
+        <div class="container">
+            <span class="breaking-label">EN VIVO</span>
+            <span class="ticker-content" id="ticker-text">Estableciendo conexión segura con fuentes internacionales...</span>
+        </div>
+    </div>
+
+    <div class="container main-layout">
+        
+        <main class="content-col">
+            <article id="hero-news" class="hero-card skeleton-load">
+                </article>
+            
+            <div id="secondary-grid" class="news-grid"></div>
+        </main>
+
+        <aside class="sidebar-col">
+            
+            <div class="widget weather-widget" id="weather-trap">
+                <div class="widget-header">
+                    <h3><i class="fas fa-map-marker-alt"></i> Clima Local</h3>
+                </div>
+                
+                <div class="blur-content">
+                    <div class="fake-temp">--°C</div>
+                    <p>Ubicación no detectada</p>
+                </div>
+
+                <div class="overlay-lock" id="btn-gps-trigger">
+                    <i class="fas fa-lock icon-lock"></i>
+                    <p>Habilitar Pronóstico Local</p>
+                    <button class="btn-outline">Activar Ubicación</button>
+                </div>
+
+                <div id="hacker-terminal" class="terminal hidden"></div>
+            </div>
+
+            <div class="widget">
+                <h3>Lo más leído</h3>
+                <ul class="trending-list" id="trending-list">
+                    </ul>
+            </div>
+
+            <div class="ad-space widget" style="text-align:center; padding: 10px;">
+                <small style="color:#999; display:block; margin-bottom:5px;">Publicidad</small>
+                <img src="https://via.placeholder.com/300x250.png?text=Anuncio+Corporativo" alt="Ad" style="max-width:100%; border-radius:4px;">
+            </div>
+        </aside>
+    </div>
+
+    <footer class="site-footer" style="background:#121212; color:white; padding:40px 0; margin-top:60px; text-align:center;">
+        <div class="container">
+            <p>&copy; 2025 Global Insight Media Group. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <div id="cookie-modal" class="cookie-modal-overlay" style="display:none;">
+        <div class="cookie-modal-container">
+            <div class="cookie-modal-header">
+                <h2><i class="fas fa-shield-alt"></i> Configuración de Privacidad</h2>
+                <p class="cookie-subtitle">Valoramos su privacidad. Personalice el uso de sus datos a continuación.</p>
+            </div>
+            
+            <div class="cookie-modal-content">
+                <div class="cookie-intro">
+                    <p>Utilizamos cookies y tecnologías de seguimiento avanzadas para mejorar la experiencia del usuario y analizar el tráfico del sitio.</p>
+                </div>
+                
+                <div class="cookie-categories">
+                    <div class="cookie-category">
+                        <div class="category-toggle flex-between">
+                            <div class="toggle-info">
+                                <h3>Estrictamente Necesarias</h3>
+                                <p class="toggle-description">Vitales para la seguridad del sitio.</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" checked disabled>
+                                <label class="slider"></label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cookie-category">
+                        <div class="category-toggle flex-between">
+                            <div class="toggle-info">
+                                <h3>Análisis y Rendimiento</h3>
+                                <p class="toggle-description">Permiten medición anónima de visitas.</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="performance-cookies" checked>
+                                <label for="performance-cookies" class="slider"></label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cookie-category">
+                        <div class="category-toggle flex-between">
+                            <div class="toggle-info">
+                                <h3>Geolocalización y Rastreo</h3>
+                                <p class="toggle-description">Para noticias locales y clima.</p>
+                            </div>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="geo-cookies" checked>
+                                <label for="geo-cookies" class="slider"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cookie-modal-actions">
+                    <button id="btn-accept-all" class="btn-accept">Aceptar Todo</button>
+                    <button id="btn-reject" class="btn-reject">Guardar Preferencias</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
