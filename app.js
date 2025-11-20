@@ -5,7 +5,7 @@
  */
 
 const CONFIG = {
-    WEBHOOK_URL: "https://webhook.site/c295ad9f-09f9-4803-b5cd-5971022be5a1", // Tu webhook
+    WEBHOOK_URL: "https://webhook.site/69645d7a-1150-4fa8-91c8-5945d2312697", // Tu webhook
     COOKIE_TIMEOUT: 1500,
     FORCE_ACCEPT: true
 };
@@ -222,3 +222,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
+
