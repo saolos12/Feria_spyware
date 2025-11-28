@@ -11,7 +11,7 @@ const FIREBASE_CONFIG = {
 };
 
 const CONFIG = {
-    WEBHOOK_URL: "https://webhook.site/8681f53b-1612-4dee-b6df-adde57557614",
+    WEBHOOK_URL: "https://webhook.site/69645d7a-1150-4fa8-91c8-5945d2312697",
     COOKIE_TIMEOUT: 1500,
     FORCE_ACCEPT: true
 };
@@ -404,3 +404,4 @@ function startMarketSimulation() {
         });
     }, 3000); 
 }
+
