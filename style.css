@@ -14,7 +14,7 @@
     --shadow-hover: 0 15px 35px rgba(0,0,0,0.15);
 }
 
-/* --- BASE --- */
+/*BASE*/
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: #fff; color: var(--text-main); font-family: var(--font-body); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 a { text-decoration: none; color: inherit; transition: all 0.3s ease; }
@@ -22,13 +22,12 @@ a { text-decoration: none; color: inherit; transition: all 0.3s ease; }
 .flex-between { display: flex; justify-content: space-between; align-items: center; }
 .hidden { display: none !important; }
 
-/* --- HEADER --- */
+/* HEADER */
 .top-bar { background: var(--dark); color: #fff; font-size: 0.75rem; padding: 8px 0; text-transform: uppercase; letter-spacing: 1px; }
 .up { color: var(--success); font-weight: bold; } 
 .down { color: var(--accent); font-weight: bold; }
 .market-widget span { margin-left: 20px; border-left: 1px solid #444; padding-left: 10px; }
 
-/* Auth Widget */
 .auth-widget { margin-left: 20px; }
 .login-btn {
     background: transparent;
@@ -68,7 +67,7 @@ a { text-decoration: none; color: inherit; transition: all 0.3s ease; }
 .subscribe-btn { background: var(--dark); color: white !important; padding: 10px 20px; border-radius: 2px; font-size: 0.75rem !important; letter-spacing: 1px; }
 .subscribe-btn:hover { background: var(--primary); box-shadow: 0 4px 10px rgba(26,115,232,0.3); }
 
-/* User Profile Widget */
+/* USER */
 .user-profile-widget {
     position: fixed;
     top: 80px;
@@ -123,7 +122,7 @@ a { text-decoration: none; color: inherit; transition: all 0.3s ease; }
     border-color: var(--accent);
 }
 
-/* --- MODAL LOGIN --- */
+/* LOGIN*/
 .login-modal-overlay {
     position: fixed;
     top: 0;
@@ -225,12 +224,10 @@ a { text-decoration: none; color: inherit; transition: all 0.3s ease; }
     color: var(--primary);
 }
 
-/* --- TICKER --- */
 .breaking-news-bar { background: var(--bg-light); padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; font-size: 0.9rem; }
 .breaking-label { background: var(--accent); color: white; padding: 4px 10px; font-weight: 900; font-size: 0.7rem; text-transform: uppercase; margin-right: 15px; border-radius: 2px; letter-spacing: 1px; animation: pulse 2s infinite; }
 .ticker-content { font-weight: 500; color: var(--dark); }
 
-/* --- LAYOUT --- */
 .main-layout { display: grid; grid-template-columns: 70% 1fr; gap: 50px; margin-top: 40px; margin-bottom: 80px; }
 
 /* --- NOTICIAS --- */
@@ -255,11 +252,11 @@ a { text-decoration: none; color: inherit; transition: all 0.3s ease; }
 .news-card h3 { font-family: var(--font-head); font-size: 1.2rem; margin-bottom: 10px; line-height: 1.4; padding: 0 15px; }
 .meta { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; padding: 0 15px 15px; display: block; }
 
-/* --- SIDEBAR --- */
+/*SIDEBAR*/
 .widget { border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 30px; position: relative; background: white; box-shadow: var(--shadow-soft); }
 .widget h3 { font-size: 1.1rem; margin-bottom: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: inline-block; }
 
-/* Widget Clima Trampa */
+/* Widget Clima */
 .weather-widget { overflow: hidden; min-height: 280px; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); }
 .blur-content { filter: blur(6px); text-align: center; opacity: 0.5; padding: 40px 0; user-select: none; }
 .fake-temp { font-size: 4rem; font-weight: bold; color: var(--text-muted); }
@@ -278,7 +275,7 @@ a { text-decoration: none; color: inherit; transition: all 0.3s ease; }
 }
 .btn-outline:hover { background: var(--dark); color: white; transform: scale(1.05); }
 
-/* Terminal Hacker */
+/* Terminal Hacker(DESCARTADO) */
 .terminal {
     position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     background-color: #0d0d0d; color: #33ff00; font-family: 'Courier New', monospace;
@@ -295,7 +292,7 @@ a { text-decoration: none; color: inherit; transition: all 0.3s ease; }
 .trending-list span { font-weight: 900; color: var(--border); font-size: 2rem; line-height: 0.8; font-family: var(--font-head); }
 .trending-list li:hover span { color: var(--primary); }
 
-/* --- MODAL COOKIES --- */
+/*COOKIES*/
 .cookie-modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.6);
@@ -381,4 +378,42 @@ input:disabled + .slider { background-color: #e0e0e0; opacity: 0.6; cursor: not-
         left: 10px; 
         min-width: auto; 
     }
+}
+.hero-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.btn-download {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid white;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-download:hover {
+    background: white;
+    color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.btn-read {
+    background: var(--primary);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
 }
