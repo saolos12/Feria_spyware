@@ -380,9 +380,9 @@ function revealArticle(newsData) {
     const heroBox = document.getElementById('hero-content-box');
 
     previewDiv.style.display = 'none';
-
+ 
     const content = newsData.content || "<p>Error: Contenido no encontrado en la base de datos.</p>";
-    fullBodyDiv.innerHTML = content + `<br><button class="btn-outline" style="color:white; border-color:white; margin-top:20px;" onclick="location.reload()">Cerrar Lectura</button>`;
+    fullBodyDiv.innerHTML = content + `<br><button class="btn-outline" style="color:white; border-color:white; margin-top:20px;" onclick="closeArticleView()">Cerrar Lectura</button>`;
 
     fullBodyDiv.style.display = 'block';
 
@@ -392,6 +392,24 @@ function revealArticle(newsData) {
     heroBox.style.bottom = "0";
     heroBox.style.height = "100%";
     heroBox.style.overflowY = "auto";
+}
+
+function closeArticleView() {
+    const previewDiv = document.getElementById('article-preview');
+    const fullBodyDiv = document.getElementById('article-full-body');
+    const heroBox = document.getElementById('hero-content-box');
+
+    previewDiv.style.display = 'block';
+    fullBodyDiv.style.display = 'none';
+
+    heroBox.style.background = "";
+    heroBox.style.backdropFilter = "";
+    heroBox.style.top = "";
+    heroBox.style.bottom = "";
+    heroBox.style.height = "";
+    heroBox.style.overflowY = "";
+
+    heroBox.scrollTop = 0;
 }
 
 function renderTrending() {
