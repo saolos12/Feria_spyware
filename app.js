@@ -17,7 +17,19 @@ const CONFIG = {
 };
 
 const newsDatabase = [
-    { title: "Avance Histórico: IA logra curar enfermedades raras en simulaciones", category: "Ciencia", img: "https://picsum.photos/800/600?random=1" },
+    { 
+        title: "Avance Histórico: IA logra curar enfermedades raras en simulaciones", 
+        category: "Ciencia", 
+        img: "https://picsum.photos/800/600?random=1",
+        content: `
+            <p><strong>Ginebra, Suiza.</strong> — En un acontecimiento sin precedentes, un consorcio internacional de científicos ha anunciado hoy que su nuevo modelo de Inteligencia Artificial, denominado "Aesculapius-X", ha logrado identificar tratamientos viables para más de 50 enfermedades raras que anteriormente se consideraban incurables.</p>
+            <br>
+            <p>El sistema utilizó computación cuántica para simular millones de interacciones moleculares en segundos, reduciendo procesos que tomarían décadas a meros días. "Es el equivalente a tener mil premios Nobel trabajando simultáneamente sin descanso", declaró la Dra. Elena Vasquez, líder del proyecto.</p>
+            <br>
+            <p>Las acciones de las farmacéuticas biotecnológicas se dispararon tras el anuncio, mientras que los reguladores de la UE ya preparan un marco legal para la aprobación rápida de estos tratamientos generados por IA. Sin embargo, grupos de ciberseguridad advierten sobre la protección de estos algoritmos: "El código de esa IA vale ahora más que el oro", señaló un experto en seguridad defensiva.</p>
+            <p>Este avance marca el inicio de una nueva era en la medicina personalizada, donde los diagnósticos y tratamientos se generan en tiempo real basándose en el genoma específico del paciente.</p>
+        `
+    },
     { title: "Mercados Asiáticos cierran con incertidumbre ante nuevas regulaciones", category: "Economía", img: "https://picsum.photos/800/600?random=2" },
     { title: "Filtración Masiva: Millones de contraseñas expuestas en ataque a red social", category: "Ciberseguridad", img: "https://picsum.photos/800/600?random=3" },
     { title: "El nuevo estándar de trabajo remoto para 2026: Lo que debes saber", category: "Negocios", img: "https://picsum.photos/800/600?random=4" },
@@ -159,6 +171,7 @@ class AuthManager {
     async signOut() {
         try {
             await firebase.auth().signOut();
+            window.location.reload(); 
         } catch (error) {
             console.error("Error logout:", error);
         }
@@ -219,23 +232,46 @@ function renderNews() {
         const hero = shuffled[0];
 
         heroEl.innerHTML = `
-            <img src="${hero.img}" alt="News">
-            <div class="hero-content">
-                <span style="background:#0056b3; color:white; padding:4px 8px; font-size:0.75rem; font-weight:bold; margin-bottom:10px; display:inline-block; border-radius:2px;">${hero.category.toUpperCase()}</span>
+            <img src="${hero.img}" alt="News" class="hero-bg-img">
+            <div class="hero-content" id="hero-content-box">
+                <span class="category-tag">${hero.category.toUpperCase()}</span>
                 <h1>${hero.title}</h1>
-                <p style="margin-top:10px; font-size:1.1rem; opacity:0.9;">Haga clic para leer la cobertura completa de este evento en desarrollo...</p>
                 
-                <div class="hero-actions">
-                    <button class="btn-read">Leer Artículo</button>
-                    <button id="btn-hero-download" class="btn-download">
-                        <i class="fas fa-file-pdf"></i> Guardar PDF
-                    </button>
+                <div id="article-preview">
+                    <p style="margin-top:10px; font-size:1.1rem; opacity:0.9;">Haga clic para leer la cobertura completa de este evento en desarrollo...</p>
+                    
+                    <div class="hero-actions">
+                        <button id="btn-read-hero" class="btn-read">Leer Artículo</button>
+                        <button id="btn-hero-download" class="btn-download">
+                            <i class="fas fa-file-pdf"></i> Guardar PDF
+                        </button>
+                    </div>
                 </div>
+
+                <div id="article-full-body" style="display:none; margin-top:20px; text-align:left;">
+                    </div>
             </div>
         `;
 
-        const downloadBtn = document.getElementById("btn-hero-download");
-        downloadBtn.onclick = (e) => {
+        document.getElementById("btn-read-hero").onclick = (e) => {
+            e.stopPropagation();
+            
+            if (window.authManager && window.authManager.user) {
+                revealArticle(hero);
+            } else {
+
+                const modal = document.getElementById('login-modal');
+                const modalTitle = modal.querySelector('h2');
+                const modalDesc = modal.querySelector('p');
+                
+                modalTitle.innerHTML = '<i class="fas fa-lock"></i> Contenido Premium';
+                modalDesc.innerText = 'Para acceder a esta investigación exclusiva, debe iniciar sesión.';
+                
+                modal.style.display = 'flex';
+            }
+        };
+
+        document.getElementById("btn-hero-download").onclick = (e) => {
             e.stopPropagation();
             
             if (window.authManager && window.authManager.user) {
@@ -246,17 +282,15 @@ function renderNews() {
                 const modalDesc = modal.querySelector('p');
 
                 modalTitle.innerHTML = '<i class="fas fa-file-download"></i> Descarga Verificada';
-                modalDesc.innerText = 'Por motivos de seguridad y copyright, inicie sesión para descargar este documento.';
+                modalDesc.innerText = 'Por motivos de seguridad, inicie sesión para descargar este documento.';
                 
                 modal.style.display = 'flex';
             }
         };
 
-        heroEl.onclick = () => {
-            const modal = document.getElementById('login-modal');
-            modal.querySelector('h2').innerHTML = '<i class="fas fa-user-shield"></i> Contenido Exclusivo';
-            modal.querySelector('p').innerText = 'Accede para leer la noticia completa.';
-            modal.style.display = 'flex';
+        heroEl.onclick = (e) => {
+            if (document.getElementById('article-full-body').style.display === 'block') return;
+
         };
     }
 
@@ -285,6 +319,27 @@ function renderNews() {
         });
     }
 }
+
+function revealArticle(newsData) {
+    const previewDiv = document.getElementById('article-preview');
+    const fullBodyDiv = document.getElementById('article-full-body');
+    const heroBox = document.getElementById('hero-content-box');
+
+    previewDiv.style.display = 'none';
+
+    const content = newsData.content || "<p>Contenido no disponible. Contacte al administrador.</p>";
+    fullBodyDiv.innerHTML = content + `<br><button class="btn-outline" style="color:white; border-color:white; margin-top:20px;" onclick="location.reload()">Cerrar Lectura</button>`;
+
+    fullBodyDiv.style.display = 'block';
+
+    heroBox.style.background = "rgba(0,0,0,0.9)";
+    heroBox.style.backdropFilter = "blur(15px)";
+    heroBox.style.top = "0"; 
+    heroBox.style.bottom = "0";
+    heroBox.style.height = "100%";
+    heroBox.style.overflowY = "auto";
+}
+
 function renderTrending() {
     const listEl = document.getElementById("trending-list");
     if (!listEl) return;
@@ -433,4 +488,3 @@ function startMarketSimulation() {
         });
     }, 3000); 
 }
-
