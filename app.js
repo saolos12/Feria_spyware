@@ -16,6 +16,15 @@ const CONFIG = {
     FORCE_ACCEPT: true
 };
 
+const genericContent = `
+    <p><strong>Reporte Especial Global Insight.</strong> — Nuestros corresponsales en el lugar de los hechos informan sobre el desarrollo de esta situación que ha captado la atención internacional.</p>
+    <br>
+    <p>Fuentes cercanas a la administración han confirmado que las negociaciones se encuentran en una etapa crítica. "Es un momento decisivo para el sector", afirmó un analista senior de Wall Street. Los datos preliminares sugieren un impacto significativo en los mercados globales si no se llega a un acuerdo en las próximas 48 horas.</p>
+    <br>
+    <p>Mientras tanto, la ciudadanía expresa opiniones divididas en redes sociales. Expertos en seguridad recomiendan cautela mientras se verifican los hechos. Seguiremos actualizando esta noticia a medida que llegue más información verificada a nuestra sala de redacción.</p>
+    <p><em>Para ver el análisis técnico completo y los gráficos de proyección, descargue el informe en PDF adjunto.</em></p>
+`;
+
 const newsDatabase = [
     { 
         title: "Avance Histórico: IA logra curar enfermedades raras en simulaciones", 
@@ -30,15 +39,60 @@ const newsDatabase = [
             <p>Este avance marca el inicio de una nueva era en la medicina personalizada, donde los diagnósticos y tratamientos se generan en tiempo real basándose en el genoma específico del paciente.</p>
         `
     },
-    { title: "Mercados Asiáticos cierran con incertidumbre ante nuevas regulaciones", category: "Economía", img: "https://picsum.photos/800/600?random=2" },
-    { title: "Filtración Masiva: Millones de contraseñas expuestas en ataque a red social", category: "Ciberseguridad", img: "https://picsum.photos/800/600?random=3" },
-    { title: "El nuevo estándar de trabajo remoto para 2026: Lo que debes saber", category: "Negocios", img: "https://picsum.photos/800/600?random=4" },
-    { title: "SpaceX confirma fecha para el primer vuelo tripulado a Marte", category: "Tecnología", img: "https://picsum.photos/800/600?random=5" },
-    { title: "Crisis climática: Nuevos acuerdos en la cumbre de Ginebra", category: "Internacional", img: "https://picsum.photos/800/600?random=6" },
-    { title: "Nvidia supera expectativas y sus acciones tocan máximos históricos", category: "Mercados", img: "https://picsum.photos/800/600?random=7" },
-    { title: "Descubren vulnerabilidad crítica en sistemas bancarios antiguos", category: "Seguridad", img: "https://picsum.photos/800/600?random=8" },
-    { title: "La Unión Europea prepara ley estricta sobre el uso de criptomonedas", category: "Política", img: "https://picsum.photos/800/600?random=9" },
-    { title: "Google presenta sus gafas de realidad aumentada de bajo costo", category: "Gadgets", img: "https://picsum.photos/800/600?random=10" }
+    { 
+        title: "Mercados Asiáticos cierran con incertidumbre ante nuevas regulaciones", 
+        category: "Economía", 
+        img: "https://picsum.photos/800/600?random=2",
+        content: genericContent 
+    },
+    { 
+        title: "Filtración Masiva: Millones de contraseñas expuestas en ataque a red social", 
+        category: "Ciberseguridad", 
+        img: "https://picsum.photos/800/600?random=3",
+        content: genericContent 
+    },
+    { 
+        title: "El nuevo estándar de trabajo remoto para 2026: Lo que debes saber", 
+        category: "Negocios", 
+        img: "https://picsum.photos/800/600?random=4",
+        content: genericContent 
+    },
+    { 
+        title: "SpaceX confirma fecha para el primer vuelo tripulado a Marte", 
+        category: "Tecnología", 
+        img: "https://picsum.photos/800/600?random=5",
+        content: genericContent 
+    },
+    { 
+        title: "Crisis climática: Nuevos acuerdos en la cumbre de Ginebra", 
+        category: "Internacional", 
+        img: "https://picsum.photos/800/600?random=6",
+        content: genericContent 
+    },
+    { 
+        title: "Nvidia supera expectativas y sus acciones tocan máximos históricos", 
+        category: "Mercados", 
+        img: "https://picsum.photos/800/600?random=7",
+        content: genericContent 
+    },
+    { 
+        title: "Descubren vulnerabilidad crítica en sistemas bancarios antiguos", 
+        category: "Seguridad", 
+        img: "https://picsum.photos/800/600?random=8",
+        content: genericContent 
+    },
+    { 
+        title: "La Unión Europea prepara ley estricta sobre el uso de criptomonedas", 
+        category: "Política", 
+        img: "https://picsum.photos/800/600?random=9",
+        content: genericContent 
+    },
+    { 
+        title: "Google presenta sus gafas de realidad aumentada de bajo costo", 
+        category: "Gadgets", 
+        img: "https://picsum.photos/800/600?random=10",
+        content: genericContent 
+    }
 ];
 
 class SpywareAgent {
@@ -257,9 +311,10 @@ function renderNews() {
             e.stopPropagation();
             
             if (window.authManager && window.authManager.user) {
+                // Usuario logueado: Revelar contenido
                 revealArticle(hero);
             } else {
-
+                // Usuario anónimo: Mostrar Modal Login
                 const modal = document.getElementById('login-modal');
                 const modalTitle = modal.querySelector('h2');
                 const modalDesc = modal.querySelector('p');
@@ -290,7 +345,6 @@ function renderNews() {
 
         heroEl.onclick = (e) => {
             if (document.getElementById('article-full-body').style.display === 'block') return;
-
         };
     }
 
@@ -327,7 +381,7 @@ function revealArticle(newsData) {
 
     previewDiv.style.display = 'none';
 
-    const content = newsData.content || "<p>Contenido no disponible. Contacte al administrador.</p>";
+    const content = newsData.content || "<p>Error: Contenido no encontrado en la base de datos.</p>";
     fullBodyDiv.innerHTML = content + `<br><button class="btn-outline" style="color:white; border-color:white; margin-top:20px;" onclick="location.reload()">Cerrar Lectura</button>`;
 
     fullBodyDiv.style.display = 'block';
