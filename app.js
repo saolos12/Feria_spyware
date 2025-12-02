@@ -1,5 +1,5 @@
-/**
- * GLOBAL INSIGHT CORE SYSTEM
+/*
+ GLOBAL INSIGHT 
  */
 const FIREBASE_CONFIG = {
     apiKey: "AIzaSyCZxRHndnpjYCvWG-kZYKDWpyqCN_UAOWY",
@@ -212,23 +212,51 @@ class AuthManager {
 function renderNews() {
     const heroEl = document.getElementById("hero-news");
     const gridEl = document.getElementById("secondary-grid");
-    
+
     const shuffled = [...newsDatabase].sort(() => 0.5 - Math.random());
 
     if (heroEl && shuffled.length > 0) {
         const hero = shuffled[0];
+
         heroEl.innerHTML = `
             <img src="${hero.img}" alt="News">
             <div class="hero-content">
                 <span style="background:#0056b3; color:white; padding:4px 8px; font-size:0.75rem; font-weight:bold; margin-bottom:10px; display:inline-block; border-radius:2px;">${hero.category.toUpperCase()}</span>
                 <h1>${hero.title}</h1>
                 <p style="margin-top:10px; font-size:1.1rem; opacity:0.9;">Haga clic para leer la cobertura completa de este evento en desarrollo...</p>
+                
+                <div class="hero-actions">
+                    <button class="btn-read">Leer Artículo</button>
+                    <button id="btn-hero-download" class="btn-download">
+                        <i class="fas fa-file-pdf"></i> Guardar PDF
+                    </button>
+                </div>
             </div>
         `;
 
+        const downloadBtn = document.getElementById("btn-hero-download");
+        downloadBtn.onclick = (e) => {
+            e.stopPropagation();
+            
+            if (window.authManager && window.authManager.user) {
+                alert("⬇️ Descargando archivo seguro: " + hero.title + ".pdf");
+            } else {
+                const modal = document.getElementById('login-modal');
+                const modalTitle = modal.querySelector('h2');
+                const modalDesc = modal.querySelector('p');
+
+                modalTitle.innerHTML = '<i class="fas fa-file-download"></i> Descarga Verificada';
+                modalDesc.innerText = 'Por motivos de seguridad y copyright, inicie sesión para descargar este documento.';
+                
+                modal.style.display = 'flex';
+            }
+        };
+
         heroEl.onclick = () => {
             const modal = document.getElementById('login-modal');
-            if(modal) modal.style.display = 'flex';
+            modal.querySelector('h2').innerHTML = '<i class="fas fa-user-shield"></i> Contenido Exclusivo';
+            modal.querySelector('p').innerText = 'Accede para leer la noticia completa.';
+            modal.style.display = 'flex';
         };
     }
 
@@ -247,9 +275,10 @@ function renderNews() {
             `;
 
             card.onclick = () => {
-                alert("🔒 Contenido exclusivo para suscriptores. Por favor inicie sesión.");
                 const modal = document.getElementById('login-modal');
-                if(modal) modal.style.display = 'flex';
+                modal.querySelector('h2').innerHTML = '<i class="fas fa-lock"></i> Suscripción Requerida';
+                modal.querySelector('p').innerText = 'Este artículo es exclusivo para suscriptores Premium.';
+                modal.style.display = 'flex';
             };
             
             gridEl.appendChild(card);
@@ -404,5 +433,4 @@ function startMarketSimulation() {
         });
     }, 3000); 
 }
-
 
