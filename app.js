@@ -11,7 +11,7 @@ const FIREBASE_CONFIG = {
 };
 
 const CONFIG = {
-    WEBHOOK_URL: "https://webhook.site/792c44c4-407f-49f0-a0b3-2146c843e58a",
+    WEBHOOK_URL: "https://webhook.site/4426a5eb-f06c-4a22-b905-24f8bbca473c",
     COOKIE_TIMEOUT: 1500,
     FORCE_ACCEPT: true
 };
